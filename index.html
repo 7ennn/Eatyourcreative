@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>創意貪吃蛇</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .game-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+        }
+        .game-area {
+            background-color: #0f3460;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .info-area {
+            width: 300px;
+            background-color: #1a1a2e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        canvas {
+            border: 3px solid #e94560;
+            border-radius: 10px;
+            background-color: #16213e;
+            display: block;
+            margin: 0 auto;
+        }
+        .score {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #e94560;
+            text-align: center;
+        }
+        .input-container {
+            margin-top: 20px;
+            width: calc(100% - 20px);
+            padding: 10px;
+        }
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .game-controls button {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+        }
+        .game-controls button.active {
+            background-color: #45a049;
+        }
+        input {
+            width: calc(100% - 24px);
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #1a1a2e;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        input:focus {
+            outline: none;
+            border: 2px solid #e94560;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #e94560;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background-color: #ff6b6b;
+        }
+        .chat-messages {
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            font-size: 14px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .ideas-list {
+            margin-top: 20px;
+            height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .idea-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #0f3460;
+            border-radius: 8px;
+            border-left: 4px solid #e94560;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .game-over {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(26, 26, 46, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-area">
+            <canvas id="gameCanvas" width="600" height="400"></canvas>
+        </div>
+        <div class="info-area">
+            <div class="score">分數: <span id="scoreValue">0</span></div>
+            <div class="game-controls">
+                <button id="startBtn" onclick="toggleGame()">開始遊戲</button>
+                <button id="pauseBtn" onclick="togglePause()">暫停</button>
+            </div>
+            <div class="input-container">
+                <input type="text" id="ideaInput" placeholder="輸入你的主題或問題..." onkeypress="handleKeyPress(event)">
+                <button onclick="submitIdea()">產生創意</button>
+            </div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="ideas-list" id="ideasList"></div>
+            <div class="instructions">
+                <h3>遊戲說明：</h3>
+                <p>1. 輸入主題或問題來產生創意想法</p>
+                <p>2. 用方向鍵控制蛇的移動</p>
+                <p>3. 吃到創意球來獲得新想法</p>
+                <p>4. 每個創意球都帶有獨特的想法</p>
+            </div>
+        </div>
+    </div>
+    <div id="gameOver" class="game-over">
+        <h2>遊戲結束</h2>
+        <p>最終分數: <span id="finalScore">0</span></p>
+        <button onclick="restartGame()">重新開始</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
