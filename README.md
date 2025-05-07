@@ -1,6 +1,7 @@
 # 創意貪吃蛇遊戲 🐍 (Eat Your Creative)
 
 這是一個結合創意發想和經典貪吃蛇遊戲的互動式應用程式。透過遊戲化的方式激發創意思考，每個點子都變成可以吃的彩色球體，吃掉後會產生更多相關的創意想法！
+說明影片：https://drive.google.com/file/d/1JayJ5BqLkAhi6hVAR7s6LiZkw2TEAU--/view?usp=drive_link
 
 ## 功能特色 ✨
 
